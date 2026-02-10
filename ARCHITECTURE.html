@@ -1,0 +1,1475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSTI Architecture Explorer</title>
+<style>
+/* ============================================================
+   CSS RESET & VARIABLES
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green-dark:   #2d6a4f;
+  --green-mid:    #40916c;
+  --green-light:  #52b788;
+  --green-pale:   #95d5b2;
+  --green-faint:  #b7e4c7;
+  --bg-deep:      #1a1a2e;
+  --bg-panel:     #16213e;
+  --bg-card:      #1e2d4a;
+  --bg-hover:     #243555;
+  --text-primary: #e8f5e9;
+  --text-muted:   #a0b4a8;
+  --text-dim:     #6b8075;
+  --accent-gold:  #f0c040;
+  --accent-orange:#e07020;
+  --accent-red:   #e05050;
+  --accent-blue:  #5090e0;
+  --accent-purple:#9060d0;
+  --radius:       8px;
+  --radius-lg:    12px;
+  --shadow:       0 4px 24px rgba(0,0,0,0.4);
+  --transition:   0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html { font-size: 15px; scroll-behavior: smooth; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.header {
+  background: linear-gradient(135deg, var(--bg-panel) 0%, var(--bg-deep) 100%);
+  border-bottom: 2px solid var(--green-dark);
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+
+.header-logo {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--green-mid), var(--green-light));
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; font-weight: 800; color: var(--bg-deep);
+  flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(82,183,136,0.3);
+}
+
+.header-text h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, var(--green-pale), var(--green-light));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.header-text p { font-size: 0.85rem; color: var(--text-muted); margin-top: 2px; }
+
+.header-badges {
+  margin-left: auto;
+  display: flex; gap: 0.6rem; flex-wrap: wrap;
+}
+.badge {
+  padding: 0.25rem 0.7rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(82,183,136,0.15);
+  border: 1px solid var(--green-dark);
+  color: var(--green-pale);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   TAB NAV
+   ============================================================ */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  background: var(--bg-panel);
+  border-bottom: 1px solid rgba(82,183,136,0.15);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.tab-bar::-webkit-scrollbar { display: none; }
+
+.tab-btn {
+  padding: 0.85rem 1.4rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.88rem;
+  font-weight: 500;
+  white-space: nowrap;
+  position: relative;
+  transition: color var(--transition), background var(--transition);
+  font-family: inherit;
+}
+.tab-btn:hover {
+  color: var(--green-pale);
+  background: rgba(82,183,136,0.05);
+}
+.tab-btn.active {
+  color: var(--green-light);
+  background: rgba(82,183,136,0.1);
+}
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--green-light);
+  border-radius: 2px 2px 0 0;
+}
+.tab-icon { margin-right: 0.45rem; font-size: 1rem; }
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+
+.tab-panel { display: none; animation: fadeIn 0.35s ease; }
+.tab-panel.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   SECTION TITLES
+   ============================================================ */
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  background: linear-gradient(90deg, var(--green-pale), var(--green-light));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.section-subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 1.8rem;
+}
+
+/* ============================================================
+   CARDS & PANELS
+   ============================================================ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid rgba(82,183,136,0.12);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem;
+  margin-bottom: 1rem;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.card:hover {
+  border-color: rgba(82,183,136,0.3);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--green-pale);
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================================
+   SCHEMA HIERARCHY (Tab 1)
+   ============================================================ */
+.schema-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1.5rem;
+  min-height: 600px;
+}
+@media (max-width: 900px) {
+  .schema-layout { grid-template-columns: 1fr; }
+}
+
+.tree-panel {
+  background: var(--bg-card);
+  border: 1px solid rgba(82,183,136,0.12);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  overflow-y: auto;
+  max-height: 75vh;
+}
+.tree-panel::-webkit-scrollbar { width: 6px; }
+.tree-panel::-webkit-scrollbar-track { background: transparent; }
+.tree-panel::-webkit-scrollbar-thumb { background: var(--green-dark); border-radius: 3px; }
+
+.tree-node {
+  cursor: pointer;
+  user-select: none;
+}
+.tree-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius);
+  transition: background var(--transition);
+  font-size: 0.9rem;
+}
+.tree-label:hover { background: var(--bg-hover); }
+.tree-label.selected { background: rgba(82,183,136,0.2); color: var(--green-light); }
+
+.tree-toggle {
+  display: inline-block;
+  width: 16px;
+  text-align: center;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  transition: transform var(--transition);
+  flex-shrink: 0;
+}
+.tree-toggle.open { transform: rotate(90deg); }
+.tree-toggle.leaf { visibility: hidden; }
+
+.tree-type-icon {
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+.type-model  .tree-type-icon { color: var(--green-light); }
+.type-enum   .tree-type-icon { color: var(--accent-gold); }
+.type-field  .tree-type-icon { color: var(--text-muted); }
+
+.tree-children {
+  margin-left: 1.2rem;
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.35s ease;
+}
+.tree-children.open { max-height: 5000px; }
+
+/* Detail panel */
+.detail-panel {
+  background: var(--bg-card);
+  border: 1px solid rgba(82,183,136,0.12);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem;
+  overflow-y: auto;
+  max-height: 75vh;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(82,183,136,0.1);
+}
+.detail-type-badge {
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.badge-model  { background: rgba(82,183,136,0.2); color: var(--green-light); }
+.badge-enum   { background: rgba(240,192,64,0.2); color: var(--accent-gold); }
+
+.detail-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.detail-desc {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  margin-bottom: 1.4rem;
+  line-height: 1.5;
+}
+
+.field-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.field-table th {
+  text-align: left;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(82,183,136,0.15);
+}
+.field-table td {
+  padding: 0.55rem 0.8rem;
+  font-size: 0.88rem;
+  border-bottom: 1px solid rgba(82,183,136,0.06);
+  vertical-align: top;
+}
+.field-table tr:hover td { background: rgba(82,183,136,0.04); }
+
+.field-name { font-weight: 600; color: var(--text-primary); font-family: 'Consolas', 'Fira Code', monospace; }
+.field-type { color: var(--accent-blue); font-family: 'Consolas', 'Fira Code', monospace; font-size: 0.83rem; }
+.field-type.clickable { cursor: pointer; text-decoration: underline; text-decoration-style: dotted; }
+.field-type.clickable:hover { color: var(--green-light); }
+.field-required { color: var(--accent-orange); font-weight: 600; font-size: 0.8rem; }
+.field-optional { color: var(--text-dim); font-size: 0.8rem; }
+
+.enum-values {
+  display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.6rem;
+}
+.enum-chip {
+  padding: 0.2rem 0.6rem;
+  background: rgba(240,192,64,0.12);
+  border: 1px solid rgba(240,192,64,0.25);
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: var(--accent-gold);
+  font-family: 'Consolas', 'Fira Code', monospace;
+}
+
+/* ============================================================
+   FHIR MAPPING (Tab 2)
+   ============================================================ */
+.fhir-grid {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  gap: 1rem 0;
+  align-items: center;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.fhir-osti, .fhir-resource {
+  padding: 1rem 1.4rem;
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+.fhir-osti {
+  background: linear-gradient(135deg, rgba(82,183,136,0.15), rgba(45,106,79,0.2));
+  border: 1px solid var(--green-dark);
+}
+.fhir-resource {
+  background: linear-gradient(135deg, rgba(80,144,224,0.15), rgba(80,144,224,0.08));
+  border: 1px solid rgba(80,144,224,0.3);
+}
+.fhir-osti-name { font-size: 1.1rem; font-weight: 700; color: var(--green-light); }
+.fhir-resource-name { font-size: 1.1rem; font-weight: 700; color: var(--accent-blue); }
+.fhir-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.3rem; }
+.fhir-arrow {
+  text-align: center;
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  font-weight: bold;
+}
+.fhir-note {
+  margin-top: 2rem;
+  padding: 1.2rem;
+  background: var(--bg-card);
+  border-left: 3px solid var(--accent-blue);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+.fhir-note strong { color: var(--accent-blue); }
+
+/* ============================================================
+   PIPELINE (Tab 3)
+   ============================================================ */
+.pipeline-flow {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  overflow-x: auto;
+  padding: 1rem 0 2rem;
+}
+.pipeline-stage {
+  flex: 0 0 auto;
+  text-align: center;
+  min-width: 180px;
+}
+.pipeline-box {
+  background: var(--bg-card);
+  border: 1px solid rgba(82,183,136,0.2);
+  border-radius: var(--radius-lg);
+  padding: 1.2rem 1rem;
+  transition: border-color var(--transition), transform var(--transition);
+  cursor: default;
+}
+.pipeline-box:hover {
+  border-color: var(--green-light);
+  transform: translateY(-2px);
+}
+.pipeline-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+.pipeline-name { font-weight: 700; font-size: 0.95rem; color: var(--green-pale); }
+.pipeline-detail { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.3rem; }
+.pipeline-ci { font-size: 0.72rem; color: var(--accent-gold); margin-top: 0.5rem; font-style: italic; }
+
+.pipeline-arrow-connector {
+  flex: 0 0 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: var(--green-dark);
+  padding-top: 1.2rem;
+}
+
+/* ============================================================
+   CONSUMER INTEGRATION (Tab 4)
+   ============================================================ */
+.integration-diagram {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.integration-layer {
+  margin-bottom: 1.5rem;
+}
+.integration-layer-title {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+  padding-left: 0.5rem;
+}
+.integration-boxes {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.int-box {
+  flex: 1;
+  min-width: 200px;
+  max-width: 350px;
+  padding: 1.2rem;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: transform var(--transition);
+}
+.int-box:hover { transform: translateY(-2px); }
+.int-box.osti-pkg {
+  background: linear-gradient(135deg, rgba(82,183,136,0.2), rgba(45,106,79,0.15));
+  border: 2px solid var(--green-mid);
+}
+.int-box.consumer {
+  background: var(--bg-card);
+  border: 1px solid rgba(82,183,136,0.15);
+}
+.int-box-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.3rem; }
+.int-box-desc { font-size: 0.82rem; color: var(--text-muted); }
+
+.chain-arrow {
+  text-align: center;
+  font-size: 1.3rem;
+  color: var(--green-dark);
+  margin: 0.5rem 0;
+}
+
+.code-block {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(82,183,136,0.1);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  font-family: 'Consolas', 'Fira Code', monospace;
+  font-size: 0.85rem;
+  color: var(--green-pale);
+  overflow-x: auto;
+  margin-top: 1.2rem;
+  line-height: 1.7;
+}
+.code-comment { color: var(--text-dim); }
+.code-keyword { color: var(--accent-purple); }
+.code-string  { color: var(--accent-gold); }
+.code-fn      { color: var(--accent-blue); }
+
+/* ============================================================
+   VERSIONING (Tab 5)
+   ============================================================ */
+.semver-visual {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+.semver-part {
+  flex: 1;
+  min-width: 240px;
+  max-width: 340px;
+  padding: 1.4rem;
+  border-radius: var(--radius-lg);
+  text-align: center;
+  transition: transform var(--transition);
+}
+.semver-part:hover { transform: translateY(-3px); }
+.semver-part.major {
+  background: rgba(224,80,80,0.1);
+  border: 1px solid rgba(224,80,80,0.3);
+}
+.semver-part.minor {
+  background: rgba(240,192,64,0.1);
+  border: 1px solid rgba(240,192,64,0.3);
+}
+.semver-part.patch {
+  background: rgba(82,183,136,0.1);
+  border: 1px solid rgba(82,183,136,0.3);
+}
+.semver-version {
+  font-size: 2rem;
+  font-weight: 800;
+  font-family: 'Consolas', 'Fira Code', monospace;
+  margin-bottom: 0.5rem;
+}
+.semver-part.major .semver-version { color: var(--accent-red); }
+.semver-part.minor .semver-version { color: var(--accent-gold); }
+.semver-part.patch .semver-version { color: var(--green-light); }
+.semver-label { font-weight: 700; font-size: 1rem; margin-bottom: 0.7rem; }
+.semver-examples { text-align: left; font-size: 0.83rem; color: var(--text-muted); }
+.semver-examples li { margin-bottom: 0.3rem; list-style: none; padding-left: 1rem; position: relative; }
+.semver-examples li::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; border-radius: 50%; }
+.semver-part.major .semver-examples li::before { background: var(--accent-red); }
+.semver-part.minor .semver-examples li::before { background: var(--accent-gold); }
+.semver-part.patch .semver-examples li::before { background: var(--green-light); }
+
+.escape-valve {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(144,96,208,0.1), rgba(144,96,208,0.05));
+  border: 1px solid rgba(144,96,208,0.3);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+.escape-valve-title { font-size: 1.1rem; font-weight: 700; color: var(--accent-purple); margin-bottom: 0.6rem; }
+.escape-valve p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+/* ============================================================
+   DATA STATS (Tab 6)
+   ============================================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(82,183,136,0.15);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  text-align: center;
+  transition: transform var(--transition), border-color var(--transition);
+}
+.stat-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--green-mid);
+}
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--green-light), var(--green-pale));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  margin-bottom: 0.3rem;
+}
+.stat-label {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.stats-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+@media (max-width: 768px) {
+  .stats-detail-grid { grid-template-columns: 1fr; }
+}
+
+.stats-list { list-style: none; }
+.stats-list li {
+  padding: 0.4rem 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.stats-list .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   TOOLTIPS
+   ============================================================ */
+.tooltip-container { position: relative; display: inline-block; }
+.tooltip-content {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+  background: var(--bg-deep);
+  border: 1px solid var(--green-dark);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  white-space: nowrap;
+  z-index: 200;
+  pointer-events: none;
+  transition: opacity 0.2s, transform 0.2s;
+  box-shadow: var(--shadow);
+}
+.tooltip-container:hover .tooltip-content {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(-4px);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 600px) {
+  .header { flex-wrap: wrap; padding: 1rem; }
+  .header-badges { margin-left: 0; }
+  .main { padding: 1rem; }
+  .schema-layout { grid-template-columns: 1fr; }
+  .pipeline-flow { flex-direction: column; align-items: center; }
+  .pipeline-arrow-connector { transform: rotate(90deg); padding-top: 0; }
+  .fhir-grid { grid-template-columns: 1fr; }
+  .fhir-arrow { transform: rotate(90deg); padding: 0.5rem 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     ============================================================ -->
+<header class="header">
+  <div class="header-logo">O</div>
+  <div class="header-text">
+    <h1>OSTI Architecture Explorer</h1>
+    <p>Open Standard for Training Interoperability</p>
+  </div>
+  <div class="header-badges">
+    <span class="badge">16 Models</span>
+    <span class="badge">6 Enums</span>
+    <span class="badge">95 Fields</span>
+    <span class="badge">FHIR-Aligned</span>
+  </div>
+</header>
+
+<!-- ============================================================
+     TAB BAR
+     ============================================================ -->
+<nav class="tab-bar" id="tabBar">
+  <button class="tab-btn active" data-tab="schema">
+    <span class="tab-icon">&#9670;</span>Schema Hierarchy
+  </button>
+  <button class="tab-btn" data-tab="fhir">
+    <span class="tab-icon">&#9829;</span>FHIR Mapping
+  </button>
+  <button class="tab-btn" data-tab="pipeline">
+    <span class="tab-icon">&#9654;</span>Artifact Pipeline
+  </button>
+  <button class="tab-btn" data-tab="consumer">
+    <span class="tab-icon">&#9881;</span>Consumer Integration
+  </button>
+  <button class="tab-btn" data-tab="versioning">
+    <span class="tab-icon">&#8644;</span>Versioning Strategy
+  </button>
+  <button class="tab-btn" data-tab="stats">
+    <span class="tab-icon">&#9783;</span>Data Stats
+  </button>
+</nav>
+
+<!-- ============================================================
+     MAIN CONTENT
+     ============================================================ -->
+<main class="main">
+
+  <!-- ====== TAB 1: SCHEMA HIERARCHY ====== -->
+  <div class="tab-panel active" id="panel-schema">
+    <h2 class="section-title">Schema Hierarchy</h2>
+    <p class="section-subtitle">Click any model or enum to inspect its fields, types, and cardinality. Click linked types to navigate.</p>
+    <div class="schema-layout">
+      <div class="tree-panel" id="treePanel"></div>
+      <div class="detail-panel" id="detailPanel">
+        <div style="display:flex;align-items:center;justify-content:center;height:300px;color:var(--text-dim);font-size:1rem;">
+          Select a model or enum from the tree to view details
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== TAB 2: FHIR MAPPING ====== -->
+  <div class="tab-panel" id="panel-fhir">
+    <h2 class="section-title">FHIR Resource Mapping</h2>
+    <p class="section-subtitle">OSTI types are designed to map cleanly onto HL7 FHIR R4 resources, enabling interoperability with healthcare and sports-science information systems.</p>
+
+    <div class="fhir-grid" id="fhirGrid"></div>
+
+    <div class="fhir-note">
+      <strong>Why FHIR?</strong> The FHIR standard provides a mature, extensible framework for structured data exchange. By aligning OSTI with FHIR resource patterns,
+      coaching platforms, sports-science tools, and analytics systems can interoperate without bespoke adapters. The <code>Extension</code> type directly mirrors
+      FHIR's extension mechanism, allowing vendor-specific data to ride alongside the core schema without breaking compatibility.
+    </div>
+  </div>
+
+  <!-- ====== TAB 3: ARTIFACT PIPELINE ====== -->
+  <div class="tab-panel" id="panel-pipeline">
+    <h2 class="section-title">Artifact Pipeline</h2>
+    <p class="section-subtitle">From Pydantic source-of-truth models to generated documentation, each CI step produces a well-defined artifact.</p>
+
+    <div class="pipeline-flow" id="pipelineFlow"></div>
+
+    <div class="card" style="margin-top:1.5rem;">
+      <div class="card-title">CI/CD Details</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin-top:0.8rem;">
+        <div>
+          <div style="font-weight:600;color:var(--green-pale);font-size:0.9rem;margin-bottom:0.3rem;">Step 1: Source Models</div>
+          <div style="font-size:0.83rem;color:var(--text-muted);">Pydantic v2 models in <code>src/osti/</code> are the single source of truth. Every field annotation, default, and validator lives here.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:var(--green-pale);font-size:0.9rem;margin-bottom:0.3rem;">Step 2: JSON Schema</div>
+          <div style="font-size:0.83rem;color:var(--text-muted);">Auto-generated via <code>model_json_schema()</code>. Published alongside each release as <code>osti-schema-vX.Y.Z.json</code>.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:var(--green-pale);font-size:0.9rem;margin-bottom:0.3rem;">Step 3: LinkML YAML</div>
+          <div style="font-size:0.83rem;color:var(--text-muted);">JSON Schema is converted to LinkML YAML via <code>scripts/generate_linkml.py</code>, enabling semantic-web tooling and ontology alignment.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:var(--green-pale);font-size:0.9rem;margin-bottom:0.3rem;">Step 4: HTML Docs</div>
+          <div style="font-size:0.83rem;color:var(--text-muted);">LinkML <code>gen-doc</code> produces browsable HTML documentation, published to GitHub Pages on every release tag.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== TAB 4: CONSUMER INTEGRATION ====== -->
+  <div class="tab-panel" id="panel-consumer">
+    <h2 class="section-title">Consumer Integration</h2>
+    <p class="section-subtitle">How downstream projects depend on the osti package for schema validation and type safety.</p>
+
+    <div class="integration-diagram">
+      <div class="integration-layer">
+        <div class="integration-layer-title">Schema Package (PyPI)</div>
+        <div class="integration-boxes">
+          <div class="int-box osti-pkg">
+            <div class="int-box-title" style="color:var(--green-light);">osti</div>
+            <div class="int-box-desc">Pydantic models, JSON Schema, enums, validators.<br>Installed via <code>pip install osti</code></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chain-arrow">&#9661; &nbsp; imported by &nbsp; &#9661;</div>
+
+      <div class="integration-layer">
+        <div class="integration-layer-title">Consumer Applications</div>
+        <div class="integration-boxes">
+          <div class="int-box consumer">
+            <div class="int-box-title" style="color:var(--accent-blue);">soccer-analytics</div>
+            <div class="int-box-desc">VLM extraction pipeline, diagram rendering, FastAPI service. Uses OSTI models for ingest validation &amp; rendering.</div>
+          </div>
+          <div class="int-box consumer">
+            <div class="int-box-title" style="color:var(--accent-purple);">Your Application</div>
+            <div class="int-box-desc">Any OSTI-aware tool can import the schema, validate session plans, and build on the standard.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chain-arrow">&#9661; &nbsp; produces &nbsp; &#9661;</div>
+
+      <div class="integration-layer">
+        <div class="integration-layer-title">Validated Outputs</div>
+        <div class="integration-boxes">
+          <div class="int-box consumer">
+            <div class="int-box-title" style="color:var(--accent-gold);">SessionPlan JSON</div>
+            <div class="int-box-desc">Validated, schema-conformant session plans ready for consumption by any OSTI-aware tool.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="code-block" style="margin-top:2rem;">
+<span class="code-comment"># Install the OSTI schema package</span>
+<span class="code-keyword">pip install</span> osti
+
+<span class="code-comment"># Import and validate in soccer-analytics</span>
+<span class="code-keyword">from</span> osti <span class="code-keyword">import</span> SessionPlan, DrillBlock, DiagramInfo
+
+<span class="code-comment"># Load a session plan from JSON</span>
+<span class="code-keyword">import</span> json
+<span class="code-keyword">with</span> <span class="code-fn">open</span>(<span class="code-string">"gold_standard.json"</span>) <span class="code-keyword">as</span> f:
+    data = json.<span class="code-fn">load</span>(f)
+
+<span class="code-comment"># Pydantic validates every field, type, and constraint</span>
+plan = SessionPlan.<span class="code-fn">model_validate</span>(data)
+
+<span class="code-comment"># Access typed, validated data</span>
+<span class="code-keyword">for</span> drill <span class="code-keyword">in</span> plan.drills:
+    <span class="code-fn">print</span>(drill.name, len(drill.diagram.player_positions))
+    <span class="code-keyword">for</span> pos <span class="code-keyword">in</span> drill.diagram.player_positions:
+        <span class="code-fn">assert</span> <span class="code-string">0</span> &lt;= pos.x &lt;= <span class="code-string">100</span>  <span class="code-comment"># Opta normalized coords</span>
+    </div>
+  </div>
+
+  <!-- ====== TAB 5: VERSIONING STRATEGY ====== -->
+  <div class="tab-panel" id="panel-versioning">
+    <h2 class="section-title">Versioning Strategy</h2>
+    <p class="section-subtitle">OSTI follows Semantic Versioning (SemVer) with a clear policy for what constitutes each change level.</p>
+
+    <div class="semver-visual">
+      <div class="semver-part major">
+        <div class="semver-version">X.0.0</div>
+        <div class="semver-label" style="color:var(--accent-red);">Major</div>
+        <ul class="semver-examples">
+          <li>Removing a required field</li>
+          <li>Changing a field type (str to int)</li>
+          <li>Renaming a model class</li>
+          <li>Removing an enum value</li>
+          <li>Changing coordinate system</li>
+        </ul>
+      </div>
+      <div class="semver-part minor">
+        <div class="semver-version">0.Y.0</div>
+        <div class="semver-label" style="color:var(--accent-gold);">Minor</div>
+        <ul class="semver-examples">
+          <li>Adding a new optional field</li>
+          <li>Adding a new enum value</li>
+          <li>Adding a new model class</li>
+          <li>Adding a new validator</li>
+          <li>Widening a type (int to float)</li>
+        </ul>
+      </div>
+      <div class="semver-part patch">
+        <div class="semver-version">0.0.Z</div>
+        <div class="semver-label" style="color:var(--green-light);">Patch</div>
+        <ul class="semver-examples">
+          <li>Fixing a docstring</li>
+          <li>Correcting a default value</li>
+          <li>Improving validation messages</li>
+          <li>Bug fix in serialization</li>
+          <li>CI/tooling improvements</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="escape-valve">
+      <div class="escape-valve-title">Extension: The Escape Valve</div>
+      <p>
+        The <code>Extension</code> model allows vendors to attach arbitrary typed data to any extensible node
+        (SessionPlan, DrillBlock, DiagramInfo) without modifying the core schema.
+        This prevents major-version bumps for vendor-specific needs. Each extension is identified by a unique
+        <code>url</code> namespace, and can carry string, integer, float, boolean, or object payloads.
+      </p>
+      <div style="margin-top:1rem;display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+        <span class="badge" style="border-color:var(--accent-purple);color:var(--accent-purple);">url: required</span>
+        <span class="badge" style="border-color:var(--accent-purple);color:var(--accent-purple);">value_string</span>
+        <span class="badge" style="border-color:var(--accent-purple);color:var(--accent-purple);">value_integer</span>
+        <span class="badge" style="border-color:var(--accent-purple);color:var(--accent-purple);">value_float</span>
+        <span class="badge" style="border-color:var(--accent-purple);color:var(--accent-purple);">value_boolean</span>
+        <span class="badge" style="border-color:var(--accent-purple);color:var(--accent-purple);">value_object</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====== TAB 6: DATA STATS ====== -->
+  <div class="tab-panel" id="panel-stats">
+    <h2 class="section-title">Schema Coverage</h2>
+    <p class="section-subtitle">Current OSTI schema statistics and coverage metrics.</p>
+
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="stats-detail-grid">
+      <div class="card">
+        <div class="card-title">Model Classes (16)</div>
+        <ul class="stats-list" id="modelsList"></ul>
+      </div>
+      <div class="card">
+        <div class="card-title">Enumerations (6)</div>
+        <ul class="stats-list" id="enumsList"></ul>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.2rem;">
+      <div class="card-title">Coordinate System</div>
+      <div style="display:flex;gap:2rem;align-items:center;flex-wrap:wrap;margin-top:0.5rem;">
+        <div style="flex:1;min-width:200px;">
+          <div style="font-size:0.9rem;color:var(--text-muted);line-height:1.7;">
+            All spatial coordinates use the <strong style="color:var(--green-light);">0-100 normalized (Opta) system</strong>.
+            The origin (0, 0) is at the bottom-left of the pitch. X increases left to right, Y increases bottom to top.
+            This normalization is independent of actual pitch dimensions, which are optionally specified in <code>PitchView</code>.
+          </div>
+        </div>
+        <div style="flex:0 0 auto;background:rgba(0,0,0,0.3);border:1px solid rgba(82,183,136,0.2);border-radius:var(--radius);padding:1rem 1.5rem;text-align:center;">
+          <div style="font-family:'Consolas',monospace;font-size:0.85rem;color:var(--text-muted);">
+            <div style="margin-bottom:0.3rem;">(0,100) __________________ (100,100)</div>
+            <div style="margin-bottom:0.3rem;">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</div>
+            <div style="margin-bottom:0.3rem;">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--green-light);">PITCH</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</div>
+            <div style="margin-bottom:0.3rem;">&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|</div>
+            <div>(0,0)&nbsp;&nbsp;__________________ (100,0)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+(function() {
+  "use strict";
+
+  /* ====== SCHEMA DATA ====== */
+  var MODELS = {
+    SessionPlan: {
+      desc: "Root container for a complete training session plan.",
+      fields: [
+        { name: "id",         type: "UUID",              required: true,  desc: "Unique identifier for the session plan" },
+        { name: "metadata",   type: "SessionMetadata",   required: true,  desc: "Session-level metadata (title, author, category)" },
+        { name: "drills",     type: "list[DrillBlock]",  required: true,  desc: "Ordered list of drill blocks in this session" },
+        { name: "source",     type: "Source",            required: true,  desc: "Information about the original source document" },
+        { name: "extensions", type: "list[Extension]",   required: false, desc: "Vendor-specific extension data" }
+      ]
+    },
+    SessionMetadata: {
+      desc: "Metadata describing the session plan as a whole.",
+      fields: [
+        { name: "title",            type: "str",  required: true,  desc: "Title of the session plan" },
+        { name: "category",         type: "str",  required: false, desc: "Training category (e.g., Attacking, Defending)" },
+        { name: "difficulty",       type: "str",  required: false, desc: "Difficulty level" },
+        { name: "author",           type: "str",  required: false, desc: "Author or organization" },
+        { name: "target_age_group", type: "str",  required: false, desc: "Intended age group" },
+        { name: "duration_minutes", type: "int",  required: false, desc: "Total session duration in minutes" },
+        { name: "desired_outcome",  type: "str",  required: false, desc: "High-level learning objective" }
+      ]
+    },
+    DrillBlock: {
+      desc: "A single drill or exercise within a session plan.",
+      fields: [
+        { name: "id",               type: "UUID",              required: true,  desc: "Unique identifier for this drill" },
+        { name: "name",             type: "str",               required: true,  desc: "Name of the drill" },
+        { name: "setup",            type: "DrillSetup",        required: true,  desc: "Physical setup instructions" },
+        { name: "diagram",          type: "DiagramInfo",       required: true,  desc: "Diagram data for visualization" },
+        { name: "sequence",         type: "list[str]",         required: false, desc: "Step-by-step execution sequence" },
+        { name: "rules",            type: "list[str]",         required: false, desc: "Rules governing the drill" },
+        { name: "scoring",          type: "list[str]",         required: false, desc: "Scoring system for the drill" },
+        { name: "coaching_points",  type: "list[str]",         required: false, desc: "Key coaching points to emphasize" },
+        { name: "progressions",     type: "list[str]",         required: false, desc: "Progression variations" },
+        { name: "drill_type",       type: "str",               required: false, desc: "Classification of drill type" },
+        { name: "directional",      type: "bool",              required: false, desc: "Whether the drill has directional play" },
+        { name: "tactical_context", type: "TacticalContext",   required: false, desc: "Tactical analysis context" },
+        { name: "extensions",       type: "list[Extension]",   required: false, desc: "Vendor-specific extension data" }
+      ]
+    },
+    DrillSetup: {
+      desc: "Physical setup and equipment requirements for a drill.",
+      fields: [
+        { name: "description",      type: "str",       required: true,  desc: "Text description of the setup" },
+        { name: "player_count",     type: "str",       required: false, desc: "Number of players (e.g., '4v4+GK')" },
+        { name: "equipment",        type: "list[str]", required: false, desc: "List of required equipment" },
+        { name: "area_dimensions",  type: "str",       required: false, desc: "Playing area dimensions" }
+      ]
+    },
+    DiagramInfo: {
+      desc: "Complete diagram representation including player positions, arrows, and equipment.",
+      fields: [
+        { name: "image_ref",         type: "str",                    required: false, desc: "Reference to original diagram image" },
+        { name: "description",       type: "str",                    required: true,  desc: "Text description of the diagram" },
+        { name: "player_positions",  type: "list[PlayerPosition]",   required: false, desc: "Positions of players on the pitch" },
+        { name: "pitch_view",        type: "PitchView",              required: false, desc: "Pitch view configuration" },
+        { name: "arrows",            type: "list[MovementArrow]",    required: false, desc: "Movement and pass arrows" },
+        { name: "equipment",         type: "list[EquipmentObject]",  required: false, desc: "Equipment placed on the pitch" },
+        { name: "goals",             type: "list[GoalInfo]",         required: false, desc: "Goal positions" },
+        { name: "balls",             type: "list[BallPosition]",     required: false, desc: "Ball positions" },
+        { name: "zones",             type: "list[PitchZone]",        required: false, desc: "Highlighted pitch zones" },
+        { name: "extensions",        type: "list[Extension]",        required: false, desc: "Vendor-specific extension data" }
+      ]
+    },
+    PlayerPosition: {
+      desc: "Position and role of a single player on the pitch diagram.",
+      fields: [
+        { name: "label", type: "str",   required: true,  desc: "Player label (e.g., 'A1', 'GK')" },
+        { name: "x",     type: "float", required: true,  desc: "X coordinate (0-100 Opta)" },
+        { name: "y",     type: "float", required: true,  desc: "Y coordinate (0-100 Opta)" },
+        { name: "role",  type: "str",   required: false, desc: "Player role description" },
+        { name: "color", type: "str",   required: false, desc: "Display color for the player marker" }
+      ]
+    },
+    MovementArrow: {
+      desc: "An arrow representing player movement, passes, or shots on the diagram.",
+      fields: [
+        { name: "start_x",         type: "float",     required: true,  desc: "Start X coordinate (0-100)" },
+        { name: "start_y",         type: "float",     required: true,  desc: "Start Y coordinate (0-100)" },
+        { name: "end_x",           type: "float",     required: true,  desc: "End X coordinate (0-100)" },
+        { name: "end_y",           type: "float",     required: true,  desc: "End Y coordinate (0-100)" },
+        { name: "arrow_type",      type: "ArrowType", required: true,  desc: "Type of movement this arrow represents" },
+        { name: "from_label",      type: "str",       required: false, desc: "Label of the source player" },
+        { name: "to_label",        type: "str",       required: false, desc: "Label of the target player" },
+        { name: "sequence_number", type: "int",       required: false, desc: "Order in sequence of play" },
+        { name: "label",           type: "str",       required: false, desc: "Optional text label on the arrow" }
+      ]
+    },
+    EquipmentObject: {
+      desc: "A piece of equipment placed on the pitch diagram.",
+      fields: [
+        { name: "equipment_type", type: "EquipmentType", required: true,  desc: "Type of equipment" },
+        { name: "x",              type: "float",         required: true,  desc: "X coordinate (0-100)" },
+        { name: "y",              type: "float",         required: true,  desc: "Y coordinate (0-100)" },
+        { name: "x2",             type: "float",         required: false, desc: "End X for line-like equipment (gates)" },
+        { name: "y2",             type: "float",         required: false, desc: "End Y for line-like equipment (gates)" },
+        { name: "label",          type: "str",           required: false, desc: "Optional label" },
+        { name: "color",          type: "str",           required: false, desc: "Display color" }
+      ]
+    },
+    GoalInfo: {
+      desc: "Position and configuration of a goal on the pitch.",
+      fields: [
+        { name: "x",             type: "float", required: true,  desc: "X coordinate (0-100)" },
+        { name: "y",             type: "float", required: true,  desc: "Y coordinate (0-100)" },
+        { name: "goal_type",     type: "str",   required: true,  desc: "Type of goal (full, mini, etc.)" },
+        { name: "width_meters",  type: "float", required: false, desc: "Goal width in meters" }
+      ]
+    },
+    BallPosition: {
+      desc: "Position of a ball on the pitch diagram.",
+      fields: [
+        { name: "x",     type: "float", required: true,  desc: "X coordinate (0-100)" },
+        { name: "y",     type: "float", required: true,  desc: "Y coordinate (0-100)" },
+        { name: "label", type: "str",   required: false, desc: "Optional label for the ball" }
+      ]
+    },
+    PitchZone: {
+      desc: "A highlighted rectangular zone on the pitch.",
+      fields: [
+        { name: "zone_type", type: "str",   required: true,  desc: "Type/name of the zone" },
+        { name: "x1",        type: "float", required: true,  desc: "Top-left X (0-100)" },
+        { name: "y1",        type: "float", required: true,  desc: "Top-left Y (0-100)" },
+        { name: "x2",        type: "float", required: true,  desc: "Bottom-right X (0-100)" },
+        { name: "y2",        type: "float", required: true,  desc: "Bottom-right Y (0-100)" },
+        { name: "label",     type: "str",   required: false, desc: "Display label" },
+        { name: "color",     type: "str",   required: false, desc: "Fill color for the zone" }
+      ]
+    },
+    PitchView: {
+      desc: "Configuration for the pitch view type and dimensions.",
+      fields: [
+        { name: "view_type",     type: "PitchViewType", required: true,  desc: "Type of pitch view" },
+        { name: "length_meters", type: "float",         required: false, desc: "Pitch length in meters" },
+        { name: "width_meters",  type: "float",         required: false, desc: "Pitch width in meters" },
+        { name: "orientation",   type: "str",           required: true,  desc: "Pitch orientation (e.g., 'vertical', 'horizontal')" }
+      ]
+    },
+    PageAnnotation: {
+      desc: "Annotation for a single page of a source document.",
+      fields: [
+        { name: "page_description", type: "str",              required: true,  desc: "Description of the page content" },
+        { name: "has_diagram",      type: "bool",             required: true,  desc: "Whether the page contains a diagram" },
+        { name: "diagrams",         type: "list[DiagramInfo]", required: false, desc: "Diagrams found on this page" }
+      ]
+    },
+    TacticalContext: {
+      desc: "Tactical analysis context for a drill, describing methodology and game situation.",
+      fields: [
+        { name: "methodology",         type: "str",           required: false, desc: "Coaching methodology framework" },
+        { name: "game_element",        type: "GameElement",   required: false, desc: "Primary game element being trained" },
+        { name: "lanes",               type: "list[LaneName]", required: false, desc: "Pitch lanes involved" },
+        { name: "situation_type",      type: "SituationType", required: false, desc: "Type of tactical situation" },
+        { name: "phase_of_play",       type: "str",           required: false, desc: "Phase of play (attack, defense, transition)" },
+        { name: "numerical_advantage", type: "str",           required: false, desc: "Numerical advantage scenario (e.g., '2v1')" }
+      ]
+    },
+    Source: {
+      desc: "Information about the original source document from which the session plan was extracted.",
+      fields: [
+        { name: "filename",              type: "str",      required: true,  desc: "Original filename" },
+        { name: "page_count",            type: "int",      required: true,  desc: "Number of pages in source document" },
+        { name: "extraction_timestamp",  type: "datetime", required: false, desc: "When the extraction was performed" }
+      ]
+    },
+    Extension: {
+      desc: "FHIR-style extension for vendor-specific data. Identified by a unique URL namespace.",
+      fields: [
+        { name: "url",           type: "str",  required: true,  desc: "Unique namespace URL identifying this extension" },
+        { name: "name",          type: "str",  required: false, desc: "Human-readable name" },
+        { name: "value_string",  type: "str",  required: false, desc: "String value payload" },
+        { name: "value_integer", type: "int",  required: false, desc: "Integer value payload" },
+        { name: "value_float",   type: "float", required: false, desc: "Float value payload" },
+        { name: "value_boolean", type: "bool", required: false, desc: "Boolean value payload" },
+        { name: "value_object",  type: "dict", required: false, desc: "Arbitrary JSON object payload" }
+      ]
+    }
+  };
+
+  var ENUMS = {
+    PitchViewType: {
+      desc: "Type of pitch view for diagram rendering.",
+      values: ["full_pitch", "half_pitch", "penalty_area", "third", "between_half_and_full", "custom"]
+    },
+    ArrowType: {
+      desc: "Classification of movement or action represented by an arrow.",
+      values: ["run", "pass", "shot", "dribble", "cross", "through_ball", "movement"]
+    },
+    EquipmentType: {
+      desc: "Type of training equipment that can be placed on the pitch.",
+      values: ["cone", "mannequin", "pole", "gate", "hurdle", "mini_goal", "full_goal", "air_body", "flag"]
+    },
+    GameElement: {
+      desc: "Primary tactical game element being trained in a drill.",
+      values: ["Counter Attack", "Fast Break", "Positional Attack", "Pressing", "Counter Pressing", "Organized Defense", "Build-Up Play", "Transition to Attack", "Transition to Defense"]
+    },
+    LaneName: {
+      desc: "Vertical lane of the pitch in a five-lane model.",
+      values: ["left_wing", "left_half_space", "central_corridor", "right_half_space", "right_wing"]
+    },
+    SituationType: {
+      desc: "Directional type of the tactical situation.",
+      values: ["Frontal", "Lateral", "Behind", "Before"]
+    }
+  };
+
+  /* Tree hierarchy: which models are children of which */
+  var TREE = {
+    name: "OSTI Schema",
+    children: [
+      { name: "SessionPlan", kind: "model", children: [
+        { name: "SessionMetadata", kind: "model" },
+        { name: "DrillBlock", kind: "model", children: [
+          { name: "DrillSetup", kind: "model" },
+          { name: "DiagramInfo", kind: "model", children: [
+            { name: "PlayerPosition", kind: "model" },
+            { name: "MovementArrow", kind: "model", children: [
+              { name: "ArrowType", kind: "enum" }
+            ]},
+            { name: "EquipmentObject", kind: "model", children: [
+              { name: "EquipmentType", kind: "enum" }
+            ]},
+            { name: "GoalInfo", kind: "model" },
+            { name: "BallPosition", kind: "model" },
+            { name: "PitchZone", kind: "model" },
+            { name: "PitchView", kind: "model", children: [
+              { name: "PitchViewType", kind: "enum" }
+            ]},
+            { name: "Extension", kind: "enum-like" }
+          ]},
+          { name: "TacticalContext", kind: "model", children: [
+            { name: "GameElement", kind: "enum" },
+            { name: "LaneName", kind: "enum" },
+            { name: "SituationType", kind: "enum" }
+          ]},
+          { name: "Extension", kind: "enum-like" }
+        ]},
+        { name: "Source", kind: "model" },
+        { name: "Extension", kind: "enum-like" }
+      ]},
+      { name: "PageAnnotation", kind: "model", children: [
+        { name: "DiagramInfo", kind: "model-ref" }
+      ]}
+    ]
+  };
+
+  /* FHIR Mappings */
+  var FHIR_MAPPINGS = [
+    { osti: "SessionPlan",    fhir: "CarePlan",            ostiDesc: "Root session container", fhirDesc: "Healthcare plan with activities" },
+    { osti: "DrillBlock",     fhir: "ActivityDefinition",  ostiDesc: "Single drill/exercise",  fhirDesc: "Detailed activity specification" },
+    { osti: "DiagramInfo",    fhir: "Media",               ostiDesc: "Diagram data & objects", fhirDesc: "Media resource (image/document)" },
+    { osti: "TacticalContext", fhir: "Observation",        ostiDesc: "Tactical analysis data",  fhirDesc: "Clinical/research observation" },
+    { osti: "Extension",      fhir: "Extension",           ostiDesc: "Vendor-specific payload", fhirDesc: "FHIR extension mechanism" }
+  ];
+
+  /* Pipeline stages */
+  var PIPELINE_STAGES = [
+    { icon: "&#128220;", name: "Pydantic Models", detail: "src/osti/*.py", ci: "Source of truth" },
+    { icon: "&#128196;", name: "JSON Schema",     detail: "osti-schema-vX.Y.Z.json", ci: "CI: generate_schema.py" },
+    { icon: "&#128279;", name: "LinkML YAML",     detail: "generated/osti.yaml", ci: "CI: generate_linkml.py" },
+    { icon: "&#127758;", name: "HTML Docs",        detail: "docs/ (GitHub Pages)", ci: "CI: gen-doc (LinkML)" }
+  ];
+
+  /* Stats */
+  var STATS = [
+    { number: "16", label: "Model Classes" },
+    { number: "6",  label: "Enumerations" },
+    { number: "95", label: "Total Fields" },
+    { number: "0-100", label: "Coordinate System" }
+  ];
+
+  /* ====== TAB SWITCHING ====== */
+  var tabBtns = document.querySelectorAll(".tab-btn");
+  tabBtns.forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      tabBtns.forEach(function(b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      document.querySelectorAll(".tab-panel").forEach(function(p) { p.classList.remove("active"); });
+      document.getElementById("panel-" + btn.dataset.tab).classList.add("active");
+    });
+  });
+
+  /* ====== SCHEMA TREE ====== */
+  var treePanel = document.getElementById("treePanel");
+  var detailPanel = document.getElementById("detailPanel");
+  var selectedLabel = null;
+  var nodeIdCounter = 0;
+
+  function buildTreeHTML(node, depth) {
+    if (!node.children && !node.kind) return ""; // root-level skip
+    var html = "";
+    var hasChildren = node.children && node.children.length > 0;
+    var id = "tn-" + (nodeIdCounter++);
+
+    if (node.kind) {
+      var typeClass = node.kind === "enum" ? "type-enum" : "type-model";
+      var iconChar = node.kind === "enum" ? "&#9673;" : "&#9632;";
+      var toggleClass = hasChildren ? "" : "leaf";
+
+      html += '<div class="tree-node ' + typeClass + '">';
+      html += '<div class="tree-label" data-name="' + node.name + '" data-kind="' + node.kind + '" id="' + id + '">';
+      html += '<span class="tree-toggle ' + toggleClass + '" data-target="' + id + '-children">&#9654;</span>';
+      html += '<span class="tree-type-icon">' + iconChar + '</span>';
+      html += '<span>' + node.name + '</span>';
+      html += '</div>';
+      if (hasChildren) {
+        html += '<div class="tree-children" id="' + id + '-children">';
+        node.children.forEach(function(child) { html += buildTreeHTML(child, depth + 1); });
+        html += '</div>';
+      }
+      html += '</div>';
+    } else {
+      // Root node
+      if (hasChildren) {
+        node.children.forEach(function(child) { html += buildTreeHTML(child, depth); });
+      }
+    }
+    return html;
+  }
+
+  treePanel.innerHTML = buildTreeHTML(TREE, 0);
+
+  // Click handlers on tree labels
+  treePanel.addEventListener("click", function(e) {
+    var label = e.target.closest(".tree-label");
+    if (!label) return;
+
+    var name = label.dataset.name;
+    var kind = label.dataset.kind;
+
+    // Toggle children
+    var toggle = label.querySelector(".tree-toggle");
+    if (toggle && !toggle.classList.contains("leaf")) {
+      var targetId = toggle.dataset.target;
+      var children = document.getElementById(targetId);
+      if (children) {
+        children.classList.toggle("open");
+        toggle.classList.toggle("open");
+      }
+    }
+
+    // Show detail
+    showDetail(name, kind);
+
+    // Highlight
+    if (selectedLabel) selectedLabel.classList.remove("selected");
+    label.classList.add("selected");
+    selectedLabel = label;
+  });
+
+  function showDetail(name, kind) {
+    if (kind === "model" || kind === "model-ref" || kind === "enum-like") {
+      var model = MODELS[name];
+      if (!model) {
+        detailPanel.innerHTML = '<div style="padding:2rem;color:var(--text-dim);">Reference to <strong>' + name + '</strong> (see parent node)</div>';
+        return;
+      }
+      var html = '<div class="detail-header">';
+      html += '<span class="detail-type-badge badge-model">Model</span>';
+      html += '<span class="detail-name">' + name + '</span>';
+      html += '</div>';
+      html += '<div class="detail-desc">' + model.desc + '</div>';
+      html += '<table class="field-table"><thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead><tbody>';
+      model.fields.forEach(function(f) {
+        var typeHTML = formatType(f.type);
+        var reqHTML = f.required ? '<span class="field-required">required</span>' : '<span class="field-optional">optional</span>';
+        html += '<tr>';
+        html += '<td><span class="field-name">' + f.name + '</span></td>';
+        html += '<td>' + typeHTML + '</td>';
+        html += '<td>' + reqHTML + '</td>';
+        html += '<td style="color:var(--text-muted);font-size:0.83rem;">' + f.desc + '</td>';
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      detailPanel.innerHTML = html;
+
+      // Make clickable types work
+      detailPanel.querySelectorAll(".field-type.clickable").forEach(function(el) {
+        el.addEventListener("click", function() {
+          var target = el.dataset.target;
+          navigateToNode(target);
+        });
+      });
+    } else if (kind === "enum") {
+      var en = ENUMS[name];
+      if (!en) return;
+      var html = '<div class="detail-header">';
+      html += '<span class="detail-type-badge badge-enum">Enum</span>';
+      html += '<span class="detail-name">' + name + '</span>';
+      html += '</div>';
+      html += '<div class="detail-desc">' + en.desc + '</div>';
+      html += '<div style="font-size:0.9rem;color:var(--text-muted);margin-bottom:0.6rem;">Values (' + en.values.length + '):</div>';
+      html += '<div class="enum-values">';
+      en.values.forEach(function(v) {
+        html += '<span class="enum-chip">' + v + '</span>';
+      });
+      html += '</div>';
+      detailPanel.innerHTML = html;
+    }
+  }
+
+  function formatType(typeStr) {
+    // Check if it references a known model or enum
+    var knownModels = Object.keys(MODELS);
+    var knownEnums = Object.keys(ENUMS);
+
+    // Handle list[X] types
+    var listMatch = typeStr.match(/^list\[(.+)\]$/);
+    if (listMatch) {
+      var inner = listMatch[1];
+      if (knownModels.indexOf(inner) >= 0 || knownEnums.indexOf(inner) >= 0) {
+        return '<span class="field-type">list[<span class="field-type clickable" data-target="' + inner + '">' + inner + '</span>]</span>';
+      }
+      return '<span class="field-type">list[' + inner + ']</span>';
+    }
+
+    if (knownModels.indexOf(typeStr) >= 0 || knownEnums.indexOf(typeStr) >= 0) {
+      return '<span class="field-type clickable" data-target="' + typeStr + '">' + typeStr + '</span>';
+    }
+    return '<span class="field-type">' + typeStr + '</span>';
+  }
+
+  function navigateToNode(name) {
+    // Find and click the tree node
+    var labels = treePanel.querySelectorAll(".tree-label");
+    for (var i = 0; i < labels.length; i++) {
+      if (labels[i].dataset.name === name) {
+        // Open all parent tree-children
+        var parent = labels[i].parentElement;
+        while (parent && parent !== treePanel) {
+          if (parent.classList.contains("tree-children")) {
+            parent.classList.add("open");
+            var prevToggle = parent.previousElementSibling;
+            if (prevToggle) {
+              var tog = prevToggle.querySelector(".tree-toggle");
+              if (tog) tog.classList.add("open");
+            }
+          }
+          parent = parent.parentElement;
+        }
+        labels[i].click();
+        labels[i].scrollIntoView({ behavior: "smooth", block: "center" });
+        break;
+      }
+    }
+  }
+
+  /* Auto-expand first level and select SessionPlan */
+  (function autoExpand() {
+    var firstChildren = treePanel.querySelector(".tree-children");
+    if (firstChildren) {
+      firstChildren.classList.add("open");
+      var firstToggle = firstChildren.previousElementSibling;
+      if (firstToggle) {
+        var t = firstToggle.querySelector(".tree-toggle");
+        if (t) t.classList.add("open");
+      }
+    }
+    // Select SessionPlan
+    var labels = treePanel.querySelectorAll(".tree-label");
+    for (var i = 0; i < labels.length; i++) {
+      if (labels[i].dataset.name === "SessionPlan") {
+        labels[i].click();
+        break;
+      }
+    }
+  })();
+
+  /* ====== FHIR MAPPING ====== */
+  var fhirGrid = document.getElementById("fhirGrid");
+  FHIR_MAPPINGS.forEach(function(m) {
+    fhirGrid.innerHTML +=
+      '<div class="fhir-osti"><div class="fhir-osti-name">' + m.osti + '</div><div class="fhir-desc">' + m.ostiDesc + '</div></div>' +
+      '<div class="fhir-arrow">&#8596;</div>' +
+      '<div class="fhir-resource"><div class="fhir-resource-name">' + m.fhir + '</div><div class="fhir-desc">' + m.fhirDesc + '</div></div>';
+  });
+
+  /* ====== PIPELINE ====== */
+  var pipelineFlow = document.getElementById("pipelineFlow");
+  PIPELINE_STAGES.forEach(function(s, idx) {
+    pipelineFlow.innerHTML +=
+      '<div class="pipeline-stage">' +
+        '<div class="pipeline-box">' +
+          '<div class="pipeline-icon">' + s.icon + '</div>' +
+          '<div class="pipeline-name">' + s.name + '</div>' +
+          '<div class="pipeline-detail">' + s.detail + '</div>' +
+          '<div class="pipeline-ci">' + s.ci + '</div>' +
+        '</div>' +
+      '</div>' +
+      (idx < PIPELINE_STAGES.length - 1 ? '<div class="pipeline-arrow-connector">&#10140;</div>' : '');
+  });
+
+  /* ====== STATS ====== */
+  var statsGrid = document.getElementById("statsGrid");
+  STATS.forEach(function(s) {
+    statsGrid.innerHTML +=
+      '<div class="stat-card">' +
+        '<div class="stat-number">' + s.number + '</div>' +
+        '<div class="stat-label">' + s.label + '</div>' +
+      '</div>';
+  });
+
+  var modelsList = document.getElementById("modelsList");
+  Object.keys(MODELS).forEach(function(name) {
+    var fieldCount = MODELS[name].fields.length;
+    modelsList.innerHTML +=
+      '<li><span class="dot" style="background:var(--green-light);"></span>' +
+      '<span style="font-weight:600;color:var(--green-pale);">' + name + '</span>' +
+      '<span style="margin-left:auto;color:var(--text-dim);font-size:0.8rem;">' + fieldCount + ' fields</span></li>';
+  });
+
+  var enumsList = document.getElementById("enumsList");
+  Object.keys(ENUMS).forEach(function(name) {
+    var valCount = ENUMS[name].values.length;
+    enumsList.innerHTML +=
+      '<li><span class="dot" style="background:var(--accent-gold);"></span>' +
+      '<span style="font-weight:600;color:var(--accent-gold);">' + name + '</span>' +
+      '<span style="margin-left:auto;color:var(--text-dim);font-size:0.8rem;">' + valCount + ' values</span></li>';
+  });
+
+})();
+</script>
+</body>
+</html>

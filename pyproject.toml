@@ -1,0 +1,26 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "osti"
+version = "0.1.0"
+description = "Open Standard for Training Interoperability — FHIR-inspired schema for soccer session plans"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [{ name = "Karsten S. Nielsen" }]
+keywords = ["soccer", "football", "training", "session-plan", "schema", "FHIR", "standard"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Scientific/Engineering",
+]
+dependencies = ["pydantic>=2.10"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "linkml>=1.8", "linkml-schema-automator>=0.5"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/osti"]

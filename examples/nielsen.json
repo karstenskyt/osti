@@ -1,0 +1,234 @@
+{
+  "metadata": {
+    "title": "Adv. Nat. GK Diploma: Defend the goal or the space",
+    "category": "Goalkeeping: General",
+    "difficulty": "Moderate",
+    "author": "Karsten Nielsen",
+    "target_age_group": null,
+    "duration_minutes": null,
+    "desired_outcome": "Goalkeeper decision-making: defend the goal or the space"
+  },
+  "drills": [
+    {
+      "name": "Coach-Goalkeeper(s)",
+      "setup": {
+        "description": "Coach plus at least 2 goalkeepers (rotate goalkeepers between repetitions). 1 goalkeeper in goal, coach at the edge of the PK area, other goalkeeper (S) to the side of coach (both sides if 3 goalkeepers). Alternate left/right after every shot (S change side if only one). Rotate goalkeepers after 4 shots.",
+        "player_count": "1 GK + 1 Coach + 1 Server (GK)",
+        "equipment": [],
+        "area_dimensions": null
+      },
+      "diagram": {
+        "image_ref": "diagrams/page_1.png",
+        "description": "Penalty area drill showing a goalkeeper in goal (green), a coach/server at the edge of the penalty area (yellow), and another goalkeeper to the left side. Numbered arrows (1-5) show the ball movement sequence: coach kicks to GK, GK returns, coach passes to server S, S shoots on goal, GK must defend.",
+        "player_positions": [
+          { "label": "GK", "x": 50, "y": 90, "role": "goalkeeper", "color": "green" },
+          { "label": "C", "x": 48, "y": 55, "role": "coach", "color": "yellow" },
+          { "label": "S", "x": 25, "y": 55, "role": "goalkeeper", "color": "green" }
+        ],
+        "pitch_view": {
+          "view_type": "penalty_area",
+          "length_meters": 16.5,
+          "width_meters": 40.3,
+          "orientation": "vertical"
+        },
+        "arrows": [
+          { "start_x": 48, "start_y": 55, "end_x": 50, "end_y": 80, "arrow_type": "pass", "from_label": "C", "to_label": "GK", "sequence_number": 1, "label": "1" },
+          { "start_x": 50, "start_y": 80, "end_x": 48, "end_y": 55, "arrow_type": "pass", "from_label": "GK", "to_label": "C", "sequence_number": 2, "label": "2" },
+          { "start_x": 48, "start_y": 55, "end_x": 25, "end_y": 55, "arrow_type": "pass", "from_label": "C", "to_label": "S", "sequence_number": 3, "label": "3" },
+          { "start_x": 25, "start_y": 55, "end_x": 50, "end_y": 85, "arrow_type": "shot", "from_label": "S", "to_label": "GK", "sequence_number": 4, "label": "4" },
+          { "start_x": 50, "start_y": 90, "end_x": 50, "end_y": 80, "arrow_type": "movement", "from_label": "GK", "to_label": null, "sequence_number": 5, "label": "5" }
+        ],
+        "equipment": [],
+        "goals": [
+          { "x": 50, "y": 100, "goal_type": "full_goal", "width_meters": 7.32 }
+        ],
+        "balls": [
+          { "x": 62, "y": 65, "label": "Ball" }
+        ],
+        "zones": []
+      },
+      "sequence": [
+        "(1) Coach kicks off ground for GK to handle (Contour or basket catch)",
+        "(2) GK bowls ball back to coach",
+        "(3) Coach makes 1 touch pass to S (other GK), at varying distance from goal",
+        "(4) S shoots on goal (1 touch)",
+        "(5) GK must either stay (defend the goal), or come out (smother/block/spread)"
+      ],
+      "rules": [],
+      "scoring": [],
+      "coaching_points": [
+        "Stay or go (\"If you cannot affect the ball, protect the goal\")",
+        "Starting position (distance + angle)",
+        "Smother, block or spread (when coming out)",
+        "Timing (\"Transfer the pressure to the striker\", don't commit too early, stay big)"
+      ],
+      "progressions": [
+        "Unannounced whether left/right (if one GK serving, start position behind coach, move left/right as ball is returned (2))",
+        "Coach can shoot directly",
+        "S can take multiple touches"
+      ],
+      "drill_type": "Technical Drill",
+      "directional": true,
+      "tactical_context": {
+        "methodology": null,
+        "game_element": null,
+        "lanes": [],
+        "situation_type": null,
+        "phase_of_play": "defending",
+        "numerical_advantage": "1v1"
+      }
+    },
+    {
+      "name": "Coach-Goalkeeper(s)-Field Players",
+      "setup": {
+        "description": "Goalkeeper plus 4 field players (or use additional GKs and rotate every 5 shots). 2 mannequins. 2 servers 5 yards outside PK area, centered between mannequins. 2 servers at PK area edge, outside of mannequins.",
+        "player_count": "1 GK + 4 field players (+ 1 reserve GK)",
+        "equipment": ["mannequin", "mannequin"],
+        "area_dimensions": null
+      },
+      "diagram": {
+        "image_ref": "diagrams/page_2.png",
+        "description": "Third-of-pitch drill showing a goal at top with GK (green), a reserve GK behind the goal to the right (green). Two blue mannequins are placed centrally. Four red field players (servers) are positioned: two outside the mannequins at the PK area edge, and two further out. Numbered arrows show a passing and shooting sequence.",
+        "player_positions": [
+          { "label": "GK", "x": 50, "y": 92, "role": "goalkeeper", "color": "green" },
+          { "label": "GK2", "x": 72, "y": 98, "role": "goalkeeper", "color": "green" },
+          { "label": "S1", "x": 35, "y": 55, "role": "field_player", "color": "red" },
+          { "label": "S2", "x": 65, "y": 55, "role": "field_player", "color": "red" },
+          { "label": "S3", "x": 25, "y": 65, "role": "field_player", "color": "red" },
+          { "label": "S4", "x": 75, "y": 65, "role": "field_player", "color": "red" }
+        ],
+        "pitch_view": {
+          "view_type": "third",
+          "length_meters": 35,
+          "width_meters": 68,
+          "orientation": "vertical"
+        },
+        "arrows": [
+          { "start_x": 65, "start_y": 55, "end_x": 50, "end_y": 85, "arrow_type": "pass", "from_label": "S2", "to_label": "GK", "sequence_number": 1, "label": "1" },
+          { "start_x": 50, "start_y": 85, "end_x": 25, "end_y": 65, "arrow_type": "pass", "from_label": "GK", "to_label": "S3", "sequence_number": 2, "label": "2" },
+          { "start_x": 25, "start_y": 65, "end_x": 35, "end_y": 55, "arrow_type": "pass", "from_label": "S3", "to_label": "S1", "sequence_number": 3, "label": "3" },
+          { "start_x": 35, "start_y": 55, "end_x": 50, "end_y": 75, "arrow_type": "run", "from_label": "S1", "to_label": null, "sequence_number": 4, "label": "4" },
+          { "start_x": 50, "start_y": 75, "end_x": 50, "end_y": 90, "arrow_type": "shot", "from_label": "S1", "to_label": "GK", "sequence_number": 5, "label": "5" }
+        ],
+        "equipment": [
+          { "equipment_type": "mannequin", "x": 40, "y": 68, "x2": null, "y2": null, "label": null, "color": "blue" },
+          { "equipment_type": "mannequin", "x": 60, "y": 68, "x2": null, "y2": null, "label": null, "color": "blue" }
+        ],
+        "goals": [
+          { "x": 50, "y": 100, "goal_type": "full_goal", "width_meters": 7.32 }
+        ],
+        "balls": [
+          { "x": 65, "y": 55, "label": null }
+        ],
+        "zones": []
+      },
+      "sequence": [
+        "(1) S2 passes the ball to GK",
+        "(2) GK passes the ball to S3 (1 touch)",
+        "(3) S3 can either: shoot directly, pass to other server outside PK area (receiving server repeats (3)), or pass to other server inside PK area (varying distance from goal)",
+        "(4) S entering the PK area shoots on goal (any number of touches, but straight to goal)",
+        "(5) GK must either stay (defend the goal), or come out (smother/block/spread)"
+      ],
+      "rules": [],
+      "scoring": [],
+      "coaching_points": [
+        "Stay or go (\"If you cannot affect the ball, protect the goal\")",
+        "Starting position (distance + angle, beware of direct shots)",
+        "Body shape when ball outside PK area (front foot, half open)",
+        "Smother, block or spread (when coming out)",
+        "Timing (\"Transfer the pressure to the striker\", don't commit too early, stay big)"
+      ],
+      "progressions": [
+        "2 servers can enter the PK area (allow 1 pass)"
+      ],
+      "drill_type": "Game-Related Practice",
+      "directional": true,
+      "tactical_context": {
+        "methodology": null,
+        "game_element": null,
+        "lanes": ["central_corridor", "left_half_space", "right_half_space"],
+        "situation_type": null,
+        "phase_of_play": "defending",
+        "numerical_advantage": "1v1"
+      }
+    },
+    {
+      "name": "Coach-Goalkeeper(s)-Team",
+      "setup": {
+        "description": "4v4+3 (floating players, always on offense) with GKs. Narrow (width of penalty area plus 3 yards on either side). Long (half a field plus space for a second PK area). Use extra field players to rotate floating players often (expected to play box to box).",
+        "player_count": "2 GK + 4v4 + 3 floaters",
+        "equipment": [],
+        "area_dimensions": "Width of PK area + 3 yds each side, length of half field"
+      },
+      "diagram": {
+        "image_ref": "diagrams/page_2.png",
+        "description": "Between-half-and-full pitch setup showing two goals with GKs (green). Three teams visible: red (4 players), blue (4 players), and yellow (3 floating players). The pitch is narrowed to roughly penalty area width. Players are distributed across the field in game-like positions.",
+        "player_positions": [
+          { "label": "GK1", "x": 50, "y": 97, "role": "goalkeeper", "color": "green" },
+          { "label": "GK2", "x": 50, "y": 3, "role": "goalkeeper", "color": "green" },
+          { "label": "R1", "x": 35, "y": 75, "role": "field_player", "color": "red" },
+          { "label": "R2", "x": 60, "y": 65, "role": "field_player", "color": "red" },
+          { "label": "R3", "x": 40, "y": 55, "role": "field_player", "color": "red" },
+          { "label": "R4", "x": 55, "y": 45, "role": "field_player", "color": "red" },
+          { "label": "B1", "x": 65, "y": 70, "role": "field_player", "color": "blue" },
+          { "label": "B2", "x": 30, "y": 60, "role": "field_player", "color": "blue" },
+          { "label": "B3", "x": 55, "y": 35, "role": "field_player", "color": "blue" },
+          { "label": "B4", "x": 40, "y": 25, "role": "field_player", "color": "blue" },
+          { "label": "Y1", "x": 50, "y": 50, "role": "field_player", "color": "yellow" },
+          { "label": "Y2", "x": 30, "y": 40, "role": "field_player", "color": "yellow" },
+          { "label": "Y3", "x": 70, "y": 45, "role": "field_player", "color": "yellow" }
+        ],
+        "pitch_view": {
+          "view_type": "between_half_and_full",
+          "length_meters": 60,
+          "width_meters": 50,
+          "orientation": "vertical"
+        },
+        "arrows": [],
+        "equipment": [],
+        "goals": [
+          { "x": 50, "y": 100, "goal_type": "full_goal", "width_meters": 7.32 },
+          { "x": 50, "y": 0, "goal_type": "full_goal", "width_meters": 7.32 }
+        ],
+        "balls": [
+          { "x": 63, "y": 68, "label": null }
+        ],
+        "zones": [
+          { "zone_type": "channel", "x1": 25, "y1": 0, "x2": 75, "y2": 100, "label": "Playing Area", "color": "blue" }
+        ]
+      },
+      "sequence": [],
+      "rules": [
+        "Defenders cannot enter own PK area before the ball is in own half (Motivation: Force a high line)",
+        "Playing with offside"
+      ],
+      "scoring": [
+        "1 pts if score on 1v1",
+        "2 pts if score and all 4 defenders in attacking half",
+        "1 point if score and all 4 defenders ahead of own PK area"
+      ],
+      "coaching_points": [
+        "Connected with defenders (close enough to defend the space behind, move up/down with defense)",
+        "Stay or go (\"If you cannot affect the ball, protect the goal\")",
+        "Smother, block or spread (when coming out)",
+        "Timing (\"Transfer the pressure to the striker\", don't commit too early, stay big)",
+        "Communication with defenders (push up, drop, keeper, back to keeper)"
+      ],
+      "progressions": [],
+      "drill_type": "Phase of Play",
+      "directional": true,
+      "tactical_context": {
+        "methodology": null,
+        "game_element": "Organized Defense",
+        "lanes": ["left_half_space", "central_corridor", "right_half_space"],
+        "situation_type": null,
+        "phase_of_play": "defending",
+        "numerical_advantage": "4v4+3"
+      }
+    }
+  ],
+  "source": {
+    "filename": "Session Plan - Karsten Nielsen.pdf",
+    "page_count": 2
+  }
+}
