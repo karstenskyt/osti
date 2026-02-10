@@ -20,7 +20,9 @@ classifiers = [
 dependencies = ["pydantic>=2.10"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "linkml>=1.8", "linkml-schema-automator>=0.5"]
+test = ["pytest>=8.0"]
+docs = ["linkml>=1.8", "linkml-schema-automator>=0.5"]
+dev = ["osti[test]", "osti[docs]"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/osti"]
