@@ -4,8 +4,8 @@ A FHIR-inspired schema for soccer/football session plans. OSTI provides a
 single, versioned source of truth for representing training sessions, drill
 diagrams, player positions, tactical context, and equipment layouts.
 
-> Open [ARCHITECTURE.html](ARCHITECTURE.html) in a browser for an interactive
-> architecture explorer.
+> Open [ARCHITECTURE.html](ARCHITECTURE.html) in a browser to explore the C4
+> architecture diagrams (System Context, Container, Component, Dynamic).
 
 ## Installation
 
