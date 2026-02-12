@@ -14,7 +14,7 @@ diagrams, player positions, tactical context, and equipment layouts.
 pip install git+https://github.com/karstenskyt/osti.git
 
 # From a specific version
-pip install git+https://github.com/karstenskyt/osti.git@v0.1.0
+pip install git+https://github.com/karstenskyt/osti.git@v0.1.1
 
 # Local development
 git clone https://github.com/karstenskyt/osti.git
@@ -54,6 +54,7 @@ print(f"  {len(plan.drills)} drills")
 | `PitchView` | Pitch dimensions and orientation |
 | `PageAnnotation` | Page-level annotation for multi-diagram documents |
 | `TacticalContext` | Tactical methodology (game elements, lanes, phases) |
+| `TrainingElements` | Coaching framework elements (Technical, Tactical, Physical, Social, Psychological) |
 | `Source` | Source document metadata |
 | `Extension` | FHIR-style extension for custom data |
 

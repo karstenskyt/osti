@@ -23,6 +23,7 @@ from osti.session_plan import (
     SessionMetadata,
     SessionPlan,
     Source,
+    TrainingElements,
 )
 from osti.tactical import (
     GameElement,
@@ -40,6 +41,7 @@ __all__ = [
     "DrillBlock",
     "DrillSetup",
     "Source",
+    "TrainingElements",
     # Diagram
     "DiagramInfo",
     "PlayerPosition",

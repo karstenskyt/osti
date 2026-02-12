@@ -21,6 +21,7 @@ from osti import (
     SessionMetadata,
     SessionPlan,
     Source,
+    TrainingElements,
 )
 from osti.tactical import (
     GameElement,
@@ -31,7 +32,7 @@ from osti.tactical import (
 
 
 def test_schema_version():
-    assert SCHEMA_VERSION == "0.1.0"
+    assert SCHEMA_VERSION == "0.1.1"
 
 
 def test_session_plan_minimal():
@@ -185,6 +186,64 @@ def test_drill_block_extensions_default():
     """DrillBlock extensions default to empty list."""
     db = DrillBlock(name="Test")
     assert db.extensions == []
+
+
+def test_training_elements_defaults():
+    """TrainingElements fields default to empty lists."""
+    te = TrainingElements()
+    assert te.technical == []
+    assert te.tactical == []
+    assert te.physical == []
+    assert te.social == []
+    assert te.psychological == []
+
+
+def test_training_elements_populated():
+    """TrainingElements accepts populated lists."""
+    te = TrainingElements(
+        technical=["Passing", "First touch"],
+        tactical=["Pressing triggers"],
+        physical=["Endurance"],
+        social=["Communication"],
+        psychological=["Decision-making under pressure"],
+    )
+    assert len(te.technical) == 2
+    assert "Pressing triggers" in te.tactical
+
+
+def test_session_plan_training_elements():
+    """SessionPlan.training_elements is optional and defaults to None."""
+    plan = SessionPlan(
+        metadata=SessionMetadata(title="TE Test"),
+        source=Source(filename="test.pdf"),
+    )
+    assert plan.training_elements is None
+
+    plan_with_te = SessionPlan(
+        metadata=SessionMetadata(title="TE Test"),
+        source=Source(filename="test.pdf"),
+        training_elements=TrainingElements(technical=["Dribbling"]),
+    )
+    assert plan_with_te.training_elements is not None
+    assert plan_with_te.training_elements.technical == ["Dribbling"]
+
+
+def test_drill_block_author():
+    """DrillBlock.author is optional and defaults to None."""
+    db = DrillBlock(name="Test")
+    assert db.author is None
+
+    db_with_author = DrillBlock(name="Test", author="Coach Smith")
+    assert db_with_author.author == "Coach Smith"
+
+
+def test_session_metadata_date():
+    """SessionMetadata.date is optional and defaults to None."""
+    meta = SessionMetadata(title="Date Test")
+    assert meta.date is None
+
+    meta_with_date = SessionMetadata(title="Date Test", date="2023/24")
+    assert meta_with_date.date == "2023/24"
 
 
 def test_json_schema_generation():

@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field
 from .extensions import Extension
 from .tactical import TacticalContext
 
-SCHEMA_VERSION = "0.1.0"
+SCHEMA_VERSION = "0.1.1"
 """Current OSTI schema version (SemVer)."""
 
 
@@ -257,6 +257,9 @@ class DrillBlock(BaseModel):
     progressions: list[str] = Field(
         default_factory=list, description="Progression variations"
     )
+    author: Optional[str] = Field(
+        None, description="Author or coach for this drill (when different from session author)"
+    )
     drill_type: Optional[str] = Field(
         None,
         description="Practice structure (e.g., 'Warm-Up', 'Technical Drill', "
@@ -273,6 +276,31 @@ class DrillBlock(BaseModel):
     )
 
 
+class TrainingElements(BaseModel):
+    """Coaching framework elements (Technical, Tactical, Physical, Social, Psychological).
+
+    All five categories are optional to accommodate plans that combine
+    Social and Psychological into a single "Psycho-Social" category,
+    or omit categories entirely.
+    """
+
+    technical: list[str] = Field(
+        default_factory=list, description="Technical skills and techniques"
+    )
+    tactical: list[str] = Field(
+        default_factory=list, description="Tactical awareness and game understanding"
+    )
+    physical: list[str] = Field(
+        default_factory=list, description="Physical attributes and demands"
+    )
+    social: list[str] = Field(
+        default_factory=list, description="Social and communication skills"
+    )
+    psychological: list[str] = Field(
+        default_factory=list, description="Psychological and mental attributes"
+    )
+
+
 class SessionMetadata(BaseModel):
     """Metadata about a session plan."""
 
@@ -282,6 +310,10 @@ class SessionMetadata(BaseModel):
     )
     difficulty: Optional[str] = Field(
         None, description="Difficulty level (e.g., 'Moderate')"
+    )
+    date: Optional[str] = Field(
+        None,
+        description="Session date, year, or season (e.g., '2023', '2023/24', 'Spring 2024')",
     )
     author: Optional[str] = Field(None, description="Author or organization")
     target_age_group: Optional[str] = Field(None, description="Target age group")
@@ -311,6 +343,11 @@ class SessionPlan(BaseModel):
     metadata: SessionMetadata
     drills: list[DrillBlock] = Field(
         default_factory=list, description="Drill blocks in order"
+    )
+    training_elements: Optional[TrainingElements] = Field(
+        None,
+        description="Session-level coaching framework elements "
+        "(Technical, Tactical, Physical, Social, Psychological)",
     )
     source: Source
     extensions: list[Extension] = Field(

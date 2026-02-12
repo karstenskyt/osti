@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.1] - 2026-02-12
+
+### Added
+- `TrainingElements` model — coaching framework elements (Technical, Tactical,
+  Physical, Social, Psychological) at the session level
+- `SessionPlan.training_elements` — optional session-level training elements
+- `SessionMetadata.date` — optional session date, year, or season
+- `DrillBlock.author` — optional per-drill author (when different from session author)
+
 ## [0.1.0] - 2026-02-10
 
 ### Added

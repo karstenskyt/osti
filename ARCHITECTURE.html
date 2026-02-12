@@ -269,10 +269,10 @@
     <p>Open Standard for Training Interoperability &mdash; C4 Model</p>
   </div>
   <div class="header-badges">
-    <span class="badge">v0.1.0</span>
-    <span class="badge">16 Models</span>
+    <span class="badge">v0.1.1</span>
+    <span class="badge">17 Models</span>
     <span class="badge">6 Enums</span>
-    <span class="badge">97 Fields</span>
+    <span class="badge">105 Fields</span>
     <span class="badge">FHIR-Aligned</span>
   </div>
 </header>
@@ -404,15 +404,15 @@
 
   System_Boundary(osti_boundary, "OSTI Schema Library") {
     Container(public_api, "Public API", "Python, __init__.py", "Package entry point exposing all models, enums, and SCHEMA_VERSION")
-    Container(core_schema, "Core Schema", "Python, Pydantic V2", "SessionPlan, DrillBlock, DiagramInfo, and 10 supporting models with 97 typed fields")
+    Container(core_schema, "Core Schema", "Python, Pydantic V2", "SessionPlan, DrillBlock, DiagramInfo, TrainingElements, and 10 supporting models with 105 typed fields")
     Container(tactical, "Tactical Models", "Python, Pydantic V2", "TacticalContext, GameElement, LaneName, SituationType for Peters/Schumacher methodology")
     Container(extensions, "Extension System", "Python, Pydantic V2", "FHIR-style Extension model supporting string, int, float, bool, and object payloads")
     Container(generator, "Artifact Generator", "Python script", "scripts/generate.py — produces JSON Schema and optional LinkML YAML from Pydantic models")
-    Container(tests, "Test Suite", "pytest", "26 tests covering models, examples, extensions, and round-trip serialization")
+    Container(tests, "Test Suite", "pytest", "31 tests covering models, examples, extensions, and round-trip serialization")
   }
 
   System_Ext(ci, "GitHub Actions CI", "Runs tests, generates schema, deploys to Pages, builds wheel on tags")
-  System_Ext(github_pages, "GitHub Pages", "Hosts JSON Schema at /schema.json and /v0.1/schema.json")
+  System_Ext(github_pages, "GitHub Pages", "Hosts JSON Schema at /schema.json and /v0.1.1/schema.json")
   System_Ext(soccer_analytics, "soccer-analytics", "Consumer application for VLM extraction and rendering")
 
   Rel(developer, public_api, "from osti import SessionPlan")
@@ -433,9 +433,10 @@
   title OSTI Core Schema — Component Diagram
 
   Container_Boundary(core, "Core Schema (session_plan.py)") {
-    Component(session_plan, "SessionPlan", "Pydantic BaseModel", "Root resource: id, metadata, drills, source, extensions")
-    Component(metadata, "SessionMetadata", "Pydantic BaseModel", "title, category, difficulty, author, duration, desired_outcome")
-    Component(drill_block, "DrillBlock", "Pydantic BaseModel", "name, setup, diagram, sequence, rules, coaching_points, progressions, drill_type")
+    Component(session_plan, "SessionPlan", "Pydantic BaseModel", "Root resource: id, metadata, drills, training_elements, source, extensions")
+    Component(training_elements, "TrainingElements", "Pydantic BaseModel", "technical, tactical, physical, social, psychological")
+    Component(metadata, "SessionMetadata", "Pydantic BaseModel", "title, category, difficulty, date, author, duration, desired_outcome")
+    Component(drill_block, "DrillBlock", "Pydantic BaseModel", "name, setup, diagram, sequence, rules, coaching_points, progressions, author, drill_type")
     Component(drill_setup, "DrillSetup", "Pydantic BaseModel", "description, player_count, equipment, area_dimensions")
     Component(diagram_info, "DiagramInfo", "Pydantic BaseModel", "description, player_positions, arrows, equipment, goals, balls, zones, pitch_view")
     Component(source, "Source", "Pydantic BaseModel", "filename, page_count, extraction_timestamp")
@@ -465,6 +466,7 @@
 
   Rel(session_plan, metadata, "contains")
   Rel(session_plan, drill_block, "contains list")
+  Rel(session_plan, training_elements, "optional")
   Rel(session_plan, source, "contains")
   Rel(session_plan, extension, "extends via list")
   Rel(drill_block, drill_setup, "contains")
