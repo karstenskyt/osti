@@ -4,7 +4,7 @@ A FHIR-inspired schema for soccer/football session plans. OSTI provides a
 single, versioned source of truth for representing training sessions, drill
 diagrams, player positions, tactical context, and equipment layouts.
 
-> Open [ARCHITECTURE.html](ARCHITECTURE.html) in a browser to explore the C4
+> Open [architecture.html](architecture.html) in a browser to explore the C4
 > architecture diagrams (System Context, Container, Component, Dynamic).
 
 ## Installation
@@ -93,15 +93,6 @@ OSTI follows [SemVer](https://semver.org/):
 
 The extension mechanism is the "escape valve" -- custom data via extensions avoids
 the need for major version bumps.
-
-## Relationship to soccer-analytics
-
-OSTI is extracted from the [soccer-analytics](https://github.com/karstenskyt/soccer-analytics)
-ecosystem. It replaces the local schema copies with a single pip-installable package.
-
-```
-soccer-analytics  --depends-on-->  osti
-```
 
 ## Artifact Generation
 

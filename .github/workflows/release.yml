@@ -54,10 +54,11 @@ jobs:
 
       - name: Prepare docs site
         run: |
-          mkdir -p _site/v0.1
-          cp generated/osti.schema.json _site/v0.1/schema.json
+          VERSION=$(python -c "from osti import SCHEMA_VERSION; print(SCHEMA_VERSION)")
+          mkdir -p "_site/v${VERSION}"
+          cp generated/osti.schema.json "_site/v${VERSION}/schema.json"
           cp generated/osti.schema.json _site/schema.json
-          cp ARCHITECTURE.html _site/index.html 2>/dev/null || echo "No ARCHITECTURE.html"
+          cp architecture.html _site/index.html 2>/dev/null || echo "No architecture.html"
 
       - name: Deploy to GitHub Pages
         uses: actions/upload-pages-artifact@v3
