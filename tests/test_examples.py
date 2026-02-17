@@ -24,7 +24,7 @@ def test_example_validates(example_path: Path):
     """Each example JSON must validate against the SessionPlan model."""
     data = json.loads(example_path.read_text(encoding="utf-8"))
     plan = SessionPlan.model_validate(data)
-    assert plan.metadata.title
+    assert plan.metadata is not None
     assert plan.source.filename
 
 

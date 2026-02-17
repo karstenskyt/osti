@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field
 from .extensions import Extension
 from .tactical import TacticalContext
 
-SCHEMA_VERSION = "0.1.1"
+SCHEMA_VERSION = "0.1.2"
 """Current OSTI schema version (SemVer)."""
 
 
@@ -235,6 +235,21 @@ class DrillSetup(BaseModel):
     )
 
 
+class AdditionalSection(BaseModel):
+    """A drill section with a non-standard header that doesn't map to a canonical field.
+
+    Used when the source document contains section headers (e.g., "Fitness:",
+    "Warm-Up Routine:") that aren't recognized as standard OSTI fields
+    (setup, sequence, rules, scoring, coaching_points, progressions).
+    The original header text is preserved as the title.
+    """
+
+    title: str = Field(..., description="Original section header text as found in the source")
+    content: list[str] = Field(
+        default_factory=list, description="Section content as list items"
+    )
+
+
 class DrillBlock(BaseModel):
     """A single drill/exercise within a session plan."""
 
@@ -257,6 +272,9 @@ class DrillBlock(BaseModel):
     progressions: list[str] = Field(
         default_factory=list, description="Progression variations"
     )
+    regressions: list[str] = Field(
+        default_factory=list, description="Regression / simplification variations"
+    )
     author: Optional[str] = Field(
         None, description="Author or coach for this drill (when different from session author)"
     )
@@ -267,6 +285,10 @@ class DrillBlock(BaseModel):
     )
     directional: Optional[bool] = Field(
         None, description="Whether the drill has a primary direction of attack"
+    )
+    additional_sections: list[AdditionalSection] = Field(
+        default_factory=list,
+        description="Sections with non-standard headers not mapped to canonical fields",
     )
     tactical_context: Optional[TacticalContext] = Field(
         None, description="Tactical methodology context"
@@ -304,7 +326,7 @@ class TrainingElements(BaseModel):
 class SessionMetadata(BaseModel):
     """Metadata about a session plan."""
 
-    title: str = Field(..., description="Session plan title")
+    title: Optional[str] = Field(None, description="Session plan title")
     category: Optional[str] = Field(
         None, description="Category (e.g., 'Goalkeeping: General')"
     )

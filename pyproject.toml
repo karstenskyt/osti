@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "osti"
-version = "0.1.1"
+version = "0.1.2"
 description = "Open Standard for Training Interoperability — FHIR-inspired schema for soccer session plans"
 readme = "README.md"
 license = "MIT"

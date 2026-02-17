@@ -6,6 +6,7 @@ FHIR-inspired schema for soccer/football session plans.
 from osti.extensions import Extension
 from osti.session_plan import (
     SCHEMA_VERSION,
+    AdditionalSection,
     ArrowType,
     BallPosition,
     DiagramInfo,
@@ -40,6 +41,7 @@ __all__ = [
     "SessionMetadata",
     "DrillBlock",
     "DrillSetup",
+    "AdditionalSection",
     "Source",
     "TrainingElements",
     # Diagram

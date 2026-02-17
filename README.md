@@ -14,7 +14,7 @@ diagrams, player positions, tactical context, and equipment layouts.
 pip install git+https://github.com/karstenskyt/osti.git
 
 # From a specific version
-pip install git+https://github.com/karstenskyt/osti.git@v0.1.1
+pip install git+https://github.com/karstenskyt/osti.git@v0.1.2
 
 # Local development
 git clone https://github.com/karstenskyt/osti.git
@@ -44,6 +44,7 @@ print(f"  {len(plan.drills)} drills")
 | `SessionMetadata` | Title, author, category, difficulty, duration |
 | `DrillBlock` | A single drill/exercise with setup, sequence, coaching points |
 | `DrillSetup` | Player count, equipment, area dimensions |
+| `AdditionalSection` | Non-standard section header with content (e.g., "Fitness:") |
 | `DiagramInfo` | Diagram with player positions, arrows, equipment, zones |
 | `PlayerPosition` | Player marker on the pitch (x, y, label, role, color) |
 | `MovementArrow` | Movement/pass/shot arrow between positions |

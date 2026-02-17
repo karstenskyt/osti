@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.2] - 2026-02-16
+
+### Added
+- `AdditionalSection` model — preserves non-standard section headers (e.g., "Fitness:",
+  "Warm-Up Routine:") that don't map to canonical DrillBlock fields
+- `DrillBlock.additional_sections` — list of AdditionalSection entries
+- `DrillBlock.regressions` — regression/simplification variations (counterpart to progressions)
+
+### Changed
+- `SessionMetadata.title` — changed from required to optional (defaults to `None`).
+  Some session plans (e.g., SFA coaching badges) have no explicit title.
+
 ## [0.1.1] - 2026-02-12
 
 ### Added

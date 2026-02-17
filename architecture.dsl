@@ -6,10 +6,10 @@ workspace "OSTI" "Open Standard for Training Interoperability — FHIR-inspired 
 
         osti = softwareSystem "OSTI Schema Library" "Python package providing Pydantic V2 models, enums, and validators for soccer session plan data. FHIR-inspired extension mechanism." {
             publicApi = container "Public API" "Package entry point exposing all models, enums, and SCHEMA_VERSION" "Python, __init__.py"
-            coreSchema = container "Core Schema" "SessionPlan, DrillBlock, DiagramInfo, TrainingElements, and 10 supporting models with 105 typed fields" "Python, Pydantic V2" {
+            coreSchema = container "Core Schema" "SessionPlan, DrillBlock, DiagramInfo, TrainingElements, AdditionalSection, and 11 supporting models" "Python, Pydantic V2" {
                 sessionPlan = component "SessionPlan" "Root: id, metadata, drills, elements, source, extensions" "BaseModel"
-                sessionMetadata = component "SessionMetadata" "title, category, difficulty, date, author" "BaseModel"
-                drillBlock = component "DrillBlock" "name, setup, diagram, coaching_points" "BaseModel"
+                sessionMetadata = component "SessionMetadata" "title (optional), category, difficulty, date, author" "BaseModel"
+                drillBlock = component "DrillBlock" "name, setup, diagram, coaching_points, regressions, additional_sections, author" "BaseModel"
                 diagramInfo = component "DiagramInfo" "positions, arrows, equipment, goals, zones" "BaseModel"
                 source = component "Source" "filename, page_count, timestamp" "BaseModel"
                 playerPosition = component "PlayerPosition" "label, x, y, role, color" "BaseModel" "DiagramModel"
@@ -26,7 +26,7 @@ workspace "OSTI" "Open Standard for Training Interoperability — FHIR-inspired 
                 extension = component "Extension" "url, name, value_string/int/float/bool/object" "BaseModel"
             }
             generator = container "Artifact Generator" "scripts/generate.py — produces JSON Schema and optional LinkML YAML from Pydantic models" "Python script"
-            tests = container "Test Suite" "31 tests covering models, examples, extensions, and round-trip serialization" "pytest"
+            tests = container "Test Suite" "34 tests covering models, examples, extensions, and round-trip serialization" "pytest"
         }
 
         consumerApp = softwareSystem "Consumer App" "Any application that imports OSTI to validate session plans" "External"
@@ -37,7 +37,7 @@ workspace "OSTI" "Open Standard for Training Interoperability — FHIR-inspired 
         # System Context relationships
         coach -> consumerApp "Uses to plan training sessions"
         consumerApp -> osti "Imports and validates against" "pip install osti"
-        developer -> osti "Installs and imports" "pip install"
+        developer -> osti "Installs and imports" "pip install osti"
         osti -> githubPages "Publishes schema artifacts" "CI/CD"
         osti -> githubReleases "Publishes wheel on tag" "CI/CD"
 
@@ -69,22 +69,22 @@ workspace "OSTI" "Open Standard for Training Interoperability — FHIR-inspired 
     }
 
     views {
-        systemContext osti "SystemContext" "System Context — OSTI in the training-plan ecosystem" {
+        systemContext osti "SystemContext" {
             include *
             autoLayout
         }
 
-        container osti "Containers" "Container diagram — modules within the OSTI schema library" {
+        container osti "Containers" {
             include *
             autoLayout
         }
 
-        component coreSchema "Components" "Component diagram — models within the Core Schema" {
+        component coreSchema "Components" {
             include *
             autoLayout
         }
 
-        dynamic osti "Dynamic" "Session Plan Validation Flow" {
+        dynamic osti "Dynamic" {
             developer -> publicApi "Calls SessionPlan.model_validate(data)"
             publicApi -> coreSchema "Delegates to Pydantic validation"
             coreSchema -> tactical "Validates TacticalContext and enums"

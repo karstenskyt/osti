@@ -5,6 +5,7 @@ from uuid import UUID
 
 from osti import (
     SCHEMA_VERSION,
+    AdditionalSection,
     ArrowType,
     BallPosition,
     DiagramInfo,
@@ -32,7 +33,7 @@ from osti.tactical import (
 
 
 def test_schema_version():
-    assert SCHEMA_VERSION == "0.1.1"
+    assert SCHEMA_VERSION == "0.1.2"
 
 
 def test_session_plan_minimal():
@@ -116,10 +117,12 @@ def test_session_plan_round_trip():
 
 def test_optional_fields_default_none():
     """All Optional fields on metadata default to None."""
-    meta = SessionMetadata(title="Defaults")
+    meta = SessionMetadata()
+    assert meta.title is None
     assert meta.category is None
     assert meta.difficulty is None
     assert meta.author is None
+    assert meta.date is None
     assert meta.target_age_group is None
     assert meta.duration_minutes is None
     assert meta.desired_outcome is None
@@ -244,6 +247,43 @@ def test_session_metadata_date():
 
     meta_with_date = SessionMetadata(title="Date Test", date="2023/24")
     assert meta_with_date.date == "2023/24"
+
+
+def test_additional_section_model():
+    """AdditionalSection stores non-standard section title and content."""
+    section = AdditionalSection(
+        title="Fitness:",
+        content=["Sprint 20m", "Recovery jog"],
+    )
+    assert section.title == "Fitness:"
+    assert len(section.content) == 2
+
+
+def test_drill_block_additional_sections():
+    """DrillBlock.additional_sections defaults to empty and survives round-trip."""
+    db = DrillBlock(name="Test")
+    assert db.additional_sections == []
+
+    db_with = DrillBlock(
+        name="Test",
+        additional_sections=[
+            AdditionalSection(title="Warm-Up Routine:", content=["Jog", "Stretch"]),
+        ],
+    )
+    json_str = db_with.model_dump_json()
+    reparsed = DrillBlock.model_validate_json(json_str)
+    assert len(reparsed.additional_sections) == 1
+    assert reparsed.additional_sections[0].title == "Warm-Up Routine:"
+    assert reparsed.additional_sections[0].content == ["Jog", "Stretch"]
+
+
+def test_drill_block_regressions():
+    """DrillBlock.regressions defaults to empty list."""
+    db = DrillBlock(name="Test")
+    assert db.regressions == []
+
+    db_with = DrillBlock(name="Test", regressions=["Remove defender", "Smaller area"])
+    assert len(db_with.regressions) == 2
 
 
 def test_json_schema_generation():
